@@ -14,6 +14,7 @@ from blog import models
 from .serializers import PostSerializer, PostDetailSerializer, PostCreateUpdateSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .permissions import IsOwnerOrReadOnly
+from .pagination import PostLimitOffsetPagination,PostPageNumberPagination
 
 class PostListAPIView(ListAPIView):
    queryset = models.Post.objects.all()
@@ -21,8 +22,20 @@ class PostListAPIView(ListAPIView):
 
    filter_backends = [SearchFilter]
    search_fields = ['title', 'des']
-   #http://127.0.0.1:8000/api/posts/?search=masht&ordering=title    -reverse order
 
+   #pagination_class = PostLimitOffsetPagination
+   pagination_class = PostPageNumberPagination
+
+""" default Pagination
+
+   from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+   
+   #http://127.0.0.1:8000/api/posts/?limit=1&offset=2
+   pagination_class = LimitOffsetPagination #PageNumberPagination
+   
+
+   #http://127.0.0.1:8000/api/posts/?search=masht&ordering=title    -reverse order
+"""
 class PostDetailAPIView(RetrieveAPIView):
    queryset = models.Post.objects.all()
    serializer_class = PostDetailSerializer

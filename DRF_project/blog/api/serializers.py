@@ -1,4 +1,9 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import (
+    ModelSerializer, 
+    HyperlinkedIdentityField,
+    SerializerMethodField,
+)
+
 from .. import models
 
 class PostCreateUpdateSerializer(ModelSerializer):
@@ -10,14 +15,29 @@ class PostCreateUpdateSerializer(ModelSerializer):
        ]
 
 class PostSerializer(ModelSerializer):
-   class Meta:
+
+    user_name = SerializerMethodField()
+
+    # you have to create get_absolute_url in models
+    url = HyperlinkedIdentityField(
+        read_only=True,
+        view_name = 'blog:detail',
+        lookup_field = 'pk'
+        )
+
+    class Meta:
        model = models.Post
        fields = [
+           'url',
            'user',
            'id',
            'title',
            'des',
+           'user_name',
        ]
+
+    def get_user_name(self , obj):
+        return str(obj.user.username)
 
 class PostDetailSerializer(ModelSerializer):
    class Meta:
